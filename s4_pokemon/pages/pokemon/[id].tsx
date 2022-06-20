@@ -20,6 +20,11 @@ const PokemonPage: NextPage<Props> = ({pokemon}) => {
 
   const [isInFavs, setIsInFavs] = useState(localst.existsInFavs(pokemon.id));
 
+  useEffect(() => {
+    const isin = localst.existsInFavs(pokemon.id);
+    setIsInFavs(isin)
+}, [])
+
   const onToogle = () => {
     localst.toogleFav(pokemon.id);
     setIsInFavs(!isInFavs);

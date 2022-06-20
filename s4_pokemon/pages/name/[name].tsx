@@ -19,7 +19,7 @@ const PokemonByNamePage: NextPage<Props> = ({pokemon}) => {
 
   const router = useRouter();
 
-  const [isInFavs, setIsInFavs] = useState(false);
+  const [isInFavs, setIsInFavs] = useState(localst.existsInFavs(pokemon.id));
 
     useEffect(() => {
         const isin = localst.existsInFavs(pokemon.id);
