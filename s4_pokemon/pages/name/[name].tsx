@@ -9,17 +9,23 @@ import { Button, Card, Container, Grid, Image, Text } from '@nextui-org/react';
 import { getPokeinfo, localst } from '../../utils';
 
 import confetti from 'canvas-confetti';
+import { PokemonResponse, SmallPokemon } from '../../interfaces/pokemoms-list';
 
 interface Props {
   pokemon: PokemonFull
 }
 
-const PokemonPage: NextPage<Props> = ({pokemon}) => {
+const PokemonByNamePage: NextPage<Props> = ({pokemon}) => {
 
   const router = useRouter();
 
-  const [isInFavs, setIsInFavs] = useState(localst.existsInFavs(pokemon.id));
+  const [isInFavs, setIsInFavs] = useState(false);
 
+    useEffect(() => {
+        const isin = localst.existsInFavs(pokemon.id);
+        setIsInFavs(isin)
+    }, [])
+    
   const onToogle = () => {
     localst.toogleFav(pokemon.id);
     setIsInFavs(!isInFavs);
@@ -113,11 +119,11 @@ const PokemonPage: NextPage<Props> = ({pokemon}) => {
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
-  const pokemon151 = [...Array(151)].map( (value, index) => `${index + 1}`);
-
+  const { data } = await pokeApi.get<PokemonResponse>('/pokemon?limit=151');
+    
   return {
-    paths: pokemon151.map( (id) => ({
-      params: {id}
+    paths: data.results.map( (item) => ({
+      params: {name: item.name}
     })),
     fallback: false
   }
@@ -125,13 +131,13 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({params}) => {
 
-  const { id } = params as {id: string};
+  const { name } = params as {name: string};
  
   return {
     props: {
-      pokemon: await getPokeinfo(id)
+      pokemon: await getPokeinfo(name)
     }
   }
 }
 
-export default PokemonPage;
+export default PokemonByNamePage;
