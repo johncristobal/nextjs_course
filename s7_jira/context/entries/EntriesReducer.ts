@@ -4,6 +4,7 @@ import { EntriesState } from './';
 type EntriesAactionType = 
 | { type: '[Entry] - Add', payload:Entry }
 | { type: '[Entry] - Update', payload:Entry }
+| { type: '[Entry] - Refresh', payload:Entry[] }
 
 export const entriesReducer = (state: EntriesState, action: EntriesAactionType) : EntriesState => {
 
@@ -23,7 +24,12 @@ export const entriesReducer = (state: EntriesState, action: EntriesAactionType) 
                   }
                   return entry;
                })
-               }
+            }
+         case '[Entry] - Refresh':
+            return {
+               ...state,
+               entries: [...action.payload]
+            }
        default:
           return state;
     }
