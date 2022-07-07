@@ -3,6 +3,7 @@ import { Entry } from '../../interfaces';
 import { entriesReducer, EntriesContext } from '.';
 import { entriesApi } from '../../apis';
 import EntryModel from '../../models/Entry';
+import { withSnackbar, useSnackbar } from 'notistack';
 
 interface Props{
     children: JSX.Element
@@ -19,6 +20,7 @@ const Entries_INITIAL_STATE: EntriesState = {
 export const EntriesProvider:FC<Props> = ({children}) => {
 
     const [state, dispatch] = useReducer(entriesReducer, Entries_INITIAL_STATE);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const addNewEntry = async (descr: string) => {
         // const newE : Entry = {
@@ -37,7 +39,7 @@ export const EntriesProvider:FC<Props> = ({children}) => {
         })
     }
 
-    const updateEntry = async ( entry: Entry ) => {
+    const updateEntry = async ( entry: Entry, showSnack = false ) => {
 
         try{
             const { data } = await entriesApi.put<Entry>(`/entries/${entry._id}`, {
@@ -49,6 +51,17 @@ export const EntriesProvider:FC<Props> = ({children}) => {
                 type: '[Entry] - Update',
                 payload: data
             })
+
+            if (showSnack){
+                enqueueSnackbar('Entrada lista...',{
+                    variant: 'success',
+                    autoHideDuration: 1500,
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'right'
+                    }
+                })
+            }
         }catch(error){
 
         }        

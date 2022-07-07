@@ -9,7 +9,7 @@ docker-compose up -d
 
 * mongodb url local:
 ...
-mongodb://localhost:27017
+mongodb://localhost:27017/entriesdb
 ...
 
 ## llenar base de datos prueba
