@@ -7,7 +7,7 @@ import { IProduct } from '../interfaces';
 
 const Home: NextPage = () => {
   return (
-    <ShopLayout title={'Testa shop - menu'} pageDescription={'Los mejores prpductops de tesla'}>
+    <ShopLayout title={'Testa shop - menu'} pageDescription={'Los mejores productos de tesla'}>
       <>
         <Typography variant='h1' component='h1'>
           Tienda
