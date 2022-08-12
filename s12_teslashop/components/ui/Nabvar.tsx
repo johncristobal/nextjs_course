@@ -1,9 +1,15 @@
 import { AppBar, Toolbar, Typography, Link, Box, Button, IconButton, Badge } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import NextLink from 'next/link';
 import { SearchOutlined, ShoppingBag } from '@mui/icons-material';
+import Router, { useRouter } from 'next/router';
+import { UiContext } from '../../context';
 
 export const Nabvar = () => {
+
+  const { asPath } =  useRouter();
+  const { toogleSideMenu } = useContext(UiContext);
+
   return (
     <AppBar>
         <Toolbar>
@@ -19,17 +25,17 @@ export const Nabvar = () => {
             <Box sx={{ display: {xs: 'none', sm: 'block'} }}> 
                 <NextLink href='/category/men' passHref>
                     <Link>
-                        <Button>Hombres</Button>
+                        <Button color={ asPath === '/category/men' ? 'primary' : 'info'}>Hombres</Button>
                     </Link>
                 </NextLink>
                 <NextLink href='/category/women' passHref>
                     <Link>
-                        <Button>Mujeres</Button>
+                        <Button color={ asPath === '/category/women' ? 'primary' : 'info'}>Mujeres</Button>
                     </Link>
                 </NextLink>
                 <NextLink href='/category/kid' passHref>
                     <Link>
-                        <Button>Ninos</Button>
+                        <Button color={ asPath === '/category/kid' ? 'primary' : 'info'}>Ninos</Button>
                     </Link>
                 </NextLink>
             </Box>
@@ -50,7 +56,11 @@ export const Nabvar = () => {
                 </Link>
             </NextLink>
 
-            <Button>Menu</Button>
+            <Button
+                onClick={toogleSideMenu}
+            >
+                Menu
+            </Button>
             
         </Toolbar>
     </AppBar>

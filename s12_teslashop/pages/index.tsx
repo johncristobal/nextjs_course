@@ -4,8 +4,13 @@ import ShopLayout from '../components/layout/ShopLayout';
 import { ProductList } from '../components/products';
 import { initialData } from '../database/products';
 import { IProduct } from '../interfaces';
+import { useProducts } from '../hooks';
+import Loading from '../components/ui/Loading';
 
 const Home: NextPage = () => {
+
+  const { products, isLoading } = useProducts('/products');
+
   return (
     <ShopLayout title={'Testa shop - menu'} pageDescription={'Los mejores productos de tesla'}>
       <>
@@ -15,9 +20,15 @@ const Home: NextPage = () => {
         <Typography variant='h2' sx={{ mb: 1}}>
           Todos los productos
         </Typography>
-
-        <ProductList products={ initialData.products as any } />
-      </>
+    {
+      isLoading
+      ? <Loading />
+      : <ProductList 
+          products={ products }
+        />
+    }
+    </>
+        
     </ShopLayout>
   )
 }
