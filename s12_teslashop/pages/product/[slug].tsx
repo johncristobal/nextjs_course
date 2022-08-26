@@ -1,21 +1,67 @@
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
-import React, { FC } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import ShopLayout from '../../components/layout/ShopLayout';
 import { ProductSlideshow } from '../../components/products';
 import ItemCounter from '../../components/ui/ItemCounter';
 import SizeSelector from '../../components/ui/SizeSelector';
-import { IProduct } from '../../interfaces';
+import { IProduct, ISizes } from '../../interfaces';
 import { GetServerSideProps } from 'next'
 import { GetStaticPaths } from 'next'
 import { GetStaticProps } from 'next'
 import { dbProducts } from '../../database';
 import { getProductBySlug } from '../../database/dbProducts';
+import { ICartProduct } from '../../interfaces';
+import { useRouter } from 'next/router';
+import { CartContext } from '../../context/cart/CartContext';
 
 interface Props{
   product: IProduct
 }
 
 const ProductPage:FC<Props> = ({product}) => {
+
+  const router = useRouter();
+  const { addProduct } = useContext(CartContext);
+
+  const [tempCartP, setTempCartP] = useState<ICartProduct>({
+    _id: product._id,
+    image: product.images[0],
+    price: product.price,
+    size: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+    quantity: 1
+  })
+
+  const selectedSize = (size: ISizes) => {
+    setTempCartP( current => ({
+      ...current,
+      size
+    }));
+  }
+
+  const selectedQuantity = (quantity: number) => {
+
+    let newValue = tempCartP.quantity + quantity;
+
+    if (newValue === -1){
+      newValue = 1;
+    }else if(newValue > product.inStock){
+      newValue = product.inStock;
+    }
+    setTempCartP( current => ({
+      ...current,
+      quantity: newValue
+    }));
+  }
+
+  const onAddProduct = () => {
+    if(tempCartP.size === undefined) return;
+        
+    addProduct(tempCartP);
+    router.push('/cart');
+  }
 
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
@@ -34,20 +80,38 @@ const ProductPage:FC<Props> = ({product}) => {
 
             <Box sx={{ my: 2 }}>
               <Typography variant='subtitle2' component={'h1'}> Cantidad </Typography>
-              <ItemCounter />
-              <SizeSelector selectorSize={'XS'} sizes={ product.sizes } />
+              <ItemCounter 
+                currentValue={ tempCartP.quantity }
+                onChangeQuantity={ (quantity) => selectedQuantity(quantity) }
+              />
+              <SizeSelector 
+                selectorSize={ tempCartP.size }
+                sizes={ product.sizes }
+                onSelectedSize={(size)=> selectedSize(size)}
+              />
             </Box>
 
-            <Button color='secondary' className='circular-btn'>
-              Agregar carrito
-            </Button>
-
-            <Chip label="No disponible" color='error' variant='outlined' />
+            { 
+              (product.inStock > 0)
+              ? (
+                <Button 
+                  onClick={ onAddProduct }
+                  color='secondary' className='circular-btn'>
+                  {
+                    tempCartP.size
+                      ? 'Agregar carrito'
+                      : 'Seleccione una talla'
+                  }
+                </Button>
+              )
+              : (
+                <Chip label="No disponible" color='error' variant='outlined' />
+              )
+            }
 
             <Box sx={{mt: 3}}>
               <Typography variant='subtitle2'> Description </Typography>
               <Typography variant='body2'> {product.description} </Typography>
-
             </Box>
           </Box>
         </Grid>

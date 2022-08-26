@@ -4,11 +4,13 @@ import NextLink from 'next/link';
 import { ClearOutlined, SearchOutlined, ShoppingBag } from '@mui/icons-material';
 import Router, { useRouter } from 'next/router';
 import { UiContext } from '../../context';
+import { CartContext } from '../../context/cart/CartContext';
 
 export const Nabvar = () => {
 
   const { asPath, push } =  useRouter();
   const { toogleSideMenu } = useContext(UiContext);
+  const { items } = useContext(CartContext);
     
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setisSearchVisible] = useState(false);
@@ -92,7 +94,7 @@ export const Nabvar = () => {
             <NextLink href='/cart' passHref>
                 <Link>
                     <IconButton>
-                        <Badge badgeContent={2} color='secondary'>
+                        <Badge badgeContent={ items } color='secondary'>
                             <ShoppingBag />
                         </Badge>
                     </IconButton>
