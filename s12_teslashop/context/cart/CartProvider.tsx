@@ -16,7 +16,7 @@ export interface CartState {
 }
 
 const Cart_INITIAL_STATE: CartState = {
-    cart: [],
+    cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [],
     items: 0,
     subtotal: 0,
     tax: 0,
