@@ -1,10 +1,27 @@
 import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import { CartList, OrdenSummary } from '../../components/cart'
 import ShopLayout from '../../components/layout/ShopLayout'
 import NextLink from "next/link";
+import { CartContext } from '../../context';
 
 const SuumaryPage = () => {
+
+    const { shippingAddres, items } = useContext(CartContext);
+    if (!shippingAddres) {
+        return  (<></>);
+    }
+
+    const { 
+        firstName,
+        lastName,
+        address,
+        address2,
+        zip,
+        city,
+        country,
+        phone } = shippingAddres;
+
   return (
    <ShopLayout title={'Resumen de la orden'} pageDescription={'Carrito de compras tienda'}>
     <>
@@ -19,7 +36,7 @@ const SuumaryPage = () => {
             <Grid item xs={12} sm={5}>
                 <Card className='summary-card'>
                     <CardContent>
-                        <Typography variant='h2'>Resumen (3 productos)</Typography>
+                        <Typography variant='h2'>Resumen ({items} { items === 1 ? 'producto' : 'producrtos'})</Typography>
                         <Divider sx={{my:1}} />
 
                         <Typography variant='subtitle1'> Dirrecion de entrega</Typography>
@@ -31,10 +48,12 @@ const SuumaryPage = () => {
                             </NextLink>
                         </Box>
                         
-                        <Typography> Alex cris </Typography>
-                        <Typography> marquex 23 d </Typography>
-                        <Typography> doctores </Typography>
-                        <Typography> Mexico </Typography>
+                        <Typography> {firstName} { lastName } </Typography>
+                        <Typography> { address } { address2 ? address2 : '' } </Typography>
+                        <Typography> { city } </Typography>
+                        <Typography> { zip } </Typography>
+                        <Typography> { country } </Typography>
+                        <Typography> { phone } </Typography>
 
                         <Divider sx={{my:1}} />
 

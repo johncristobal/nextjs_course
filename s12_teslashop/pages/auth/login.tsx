@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AuthLayout } from '../../components/layout'
 import NextLink from "next/link";
 import { useForm } from "react-hook-form";
@@ -17,9 +17,8 @@ const LoginPage = () => {
 
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
-    const [showError, setShowError] = useState(false);    
+    const [showError, setShowError] = useState(false); 
     const { loginUser } = useContext(AuthContext);
-
     const onLoginUser = async ({email, password}: FormData) => {
         
         setShowError(false);
@@ -31,8 +30,9 @@ const LoginPage = () => {
             }, 3000);
             return;
         }
-
-        router.replace('/');
+       
+        const dest = router.query.p?.toString() || '/';
+        router.replace(dest);
     }
 
   return (
@@ -90,7 +90,10 @@ const LoginPage = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12}>
-                        <NextLink href={'/auth/register'} passHref>
+                        <NextLink 
+                            href={router.query.p ? `/auth/register?p=${router.query.p}` : '/auth/register'}
+                            passHref
+                        >
                             <Link underline='always'>
                                 Registrarse
                             </Link>

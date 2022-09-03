@@ -8,19 +8,34 @@ interface Props{
 }
 
 export interface CartState {
+    loaded: boolean;
     cart: ICartProduct[];
     items: number;
     subtotal: number;
     tax: number;
     total: number;
+    shippingAddres?: ShippingAddress;
+}
+
+export interface ShippingAddress {
+    firstName: string;
+    lastName: string;
+    address: string;
+    address2?: string;
+    zip: string;
+    city: string;
+    country: string;
+    phone: string;
 }
 
 const Cart_INITIAL_STATE: CartState = {
+    loaded : false,
     cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [],
     items: 0,
     subtotal: 0,
     tax: 0,
-    total: 0
+    total: 0,
+    shippingAddres : undefined,
 }
 
 export const CartProvider:FC<Props> = ({children}) => {
@@ -46,6 +61,40 @@ export const CartProvider:FC<Props> = ({children}) => {
         }
     }, [])
 
+    useEffect(() => {      
+        try{
+            dispatch({
+                type: 'Cart - Load Address from cookie',
+                payload: {
+                    firstName: Cookie.get('firstName') || '',
+                    lastName: Cookie.get('lastName') || '',
+                    address: Cookie.get('address') || '',
+                    address2: Cookie.get('address2') || '',
+                    zip: Cookie.get('zip') || '',
+                    city: Cookie.get('city') || '',
+                    country: Cookie.get('country') || '',
+                    phone: Cookie.get('phone') || '',
+                }
+            })
+        }
+        catch(error){
+            dispatch({
+                type: 'Cart - Load Address from cookie',
+                payload: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    address2: '',
+                    zip: '',
+                    city: '',
+                    country: '',
+                    phone: '',
+                }
+            })
+        }
+    }, [])
+    
+
     useEffect(() => {
        
         //itera el anterior mas el actual para obtener el total de elementos/subtotal
@@ -67,6 +116,13 @@ export const CartProvider:FC<Props> = ({children}) => {
 
     }, [state.cart])
     
+    const updateAddres = ( address: ShippingAddress) => {
+        dispatch({
+            type: "Cart - Update Address from cookie",
+            payload: address
+        })
+    }
+
     const updateCartQ = (product: ICartProduct) => {
         dispatch({
             type: 'Cart - Update Q Product',
@@ -114,7 +170,8 @@ export const CartProvider:FC<Props> = ({children}) => {
        ...state,
        addProduct,
        updateCartQ,
-       removeCartQ
+       removeCartQ,
+       updateAddres
     }}>
         {children}
 
