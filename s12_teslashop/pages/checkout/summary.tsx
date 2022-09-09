@@ -1,13 +1,25 @@
 import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { CartList, OrdenSummary } from '../../components/cart'
 import ShopLayout from '../../components/layout/ShopLayout'
 import NextLink from "next/link";
 import { CartContext } from '../../context';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 const SuumaryPage = () => {
 
+    const router = useRouter();
     const { shippingAddres, items } = useContext(CartContext);
+
+    useEffect(() => {
+
+      if(!Cookies.get('firstName')){
+        router.push('/checkout/address');
+      }
+    }, [router])
+    
+
     if (!shippingAddres) {
         return  (<></>);
     }

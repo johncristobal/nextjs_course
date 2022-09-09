@@ -2,10 +2,7 @@ import { Typography, Box } from '@mui/material';
 import type { NextPage } from 'next'
 import ShopLayout from '../../components/layout/ShopLayout';
 import { ProductList } from '../../components/products';
-import { initialData } from '../../database/seed-data';
 import { IProduct } from '../../interfaces';
-import { useProducts } from '../../hooks';
-import Loading from '../../components/ui/Loading';
 import { GetServerSideProps } from 'next'
 import { dbProducts } from '../../database';
 

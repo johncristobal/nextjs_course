@@ -1,6 +1,6 @@
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import ShopLayout from '../../components/layout/ShopLayout';
 
 type FormData = {
@@ -32,9 +32,23 @@ const AddressPage = () => {
 
     const {updateAddres} = useContext(CartContext);
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
-        defaultValues: getAddressCookie()
-    });
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
+        defaultValues: {
+             firstName: '',
+             lastName: '',
+             address: '',
+             address2: '',
+             zip: '',
+             city: '',
+             country: '',
+             phone: '',
+        } 
+     });
+
+     useEffect(() => {
+        reset(getAddressCookie() );
+
+    }, [reset])
 
     const onSubmitAddress = (data: FormData) => {
     
