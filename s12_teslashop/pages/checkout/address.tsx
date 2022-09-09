@@ -45,10 +45,10 @@ const AddressPage = () => {
         } 
      });
 
-     useEffect(() => {
-        reset(getAddressCookie() );
+    //  useEffect(() => {
+    //     reset(getAddressCookie() );
 
-    }, [reset])
+    // }, [reset])
 
     const onSubmitAddress = (data: FormData) => {
     
@@ -121,7 +121,7 @@ const AddressPage = () => {
                     helperText={ errors.city?.message }
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                {/* <Grid item xs={12} sm={6}>
                     <FormControl fullWidth> 
                         <TextField
                             select
@@ -141,7 +141,7 @@ const AddressPage = () => {
                             }
                         </TextField>
                     </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={6}>
                     <TextField label="Telefono" variant='filled' fullWidth
                     { ...register('phone', {
@@ -171,32 +171,32 @@ import Router from 'next/router';
 import { useRouter } from 'next/router';
 import { CartContext } from '../../context';
 
-export const getServerSideProps: GetServerSideProps = async ({req}) => {
+// export const getServerSideProps: GetServerSideProps = async ({req}) => {
 
-    const { token = '' } = req.cookies;
-    let userid = '';
-    let validtoken = false;
+//     const { token = '' } = req.cookies;
+//     let userid = '';
+//     let validtoken = false;
 
-    try{
-        userid = await jwt.isValidToken( token );
-        validtoken = true;
-    }catch(error){
-        validtoken = false;
-    }
+//     try{
+//         userid = await jwt.isValidToken( token );
+//         validtoken = true;
+//     }catch(error){
+//         validtoken = false;
+//     }
 
-    if (!validtoken){
-        return {
-            redirect: {
-                destination: '/auth/login?p=/checkout/address',
-                permanent: false
-            }
-        }
-    }
-    return {
-        props: {
+//     if (!validtoken){
+//         return {
+//             redirect: {
+//                 destination: '/auth/login?p=/checkout/address',
+//                 permanent: false
+//             }
+//         }
+//     }
+//     return {
+//         props: {
             
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export default AddressPage
