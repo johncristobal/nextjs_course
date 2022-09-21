@@ -1,7 +1,10 @@
 import { FC, useEffect, useReducer } from 'react';
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, ShippingAddress } from '../../interfaces';
 import { CartContext, CartReducer } from './';
 import Cookie from "js-cookie";
+import { tesloApi } from '../../api';
+import { IOrder } from '../../interfaces/order';
+import axios, { AxiosError } from 'axios';
 
 interface Props{
     children: JSX.Element
@@ -15,17 +18,6 @@ export interface CartState {
     tax: number;
     total: number;
     shippingAddres?: ShippingAddress;
-}
-
-export interface ShippingAddress {
-    firstName: string;
-    lastName: string;
-    address: string;
-    address2?: string;
-    zip: string;
-    city: string;
-    country: string;
-    phone: string;
 }
 
 const Cart_INITIAL_STATE: CartState = {
@@ -100,12 +92,12 @@ export const CartProvider:FC<Props> = ({children}) => {
         //itera el anterior mas el actual para obtener el total de elementos/subtotal
         const items = state.cart.reduce((prev, current) => current.quantity + prev, 0);
         const subtotal = state.cart.reduce((prev, current) => (current.quantity * current.price) + prev, 0);
-        const tax = subtotal * Number(process.env.NEXT_PUBLIC_TAX || 0);
+        const tax = Number(process.env.NEXT_PUBLIC_TAX || 0);
 
         const orderSummary = {
             items,
             subtotal, 
-            tax,
+            tax: subtotal * tax,
             total: subtotal * (tax + 1)
         }
 
@@ -165,13 +157,62 @@ export const CartProvider:FC<Props> = ({children}) => {
         })
     }
 
+    const createOrder = async (): Promise<{ hasError: boolean; msg: string; }> => {
+
+        if (!state.shippingAddres){
+            throw new Error("No direccion")
+        }
+
+        const body: IOrder = {
+            orderItems: state.cart.map(p => ({
+                ...p,
+                size: p.size!
+            })),
+            shippingAddress: state.shippingAddres,
+            numberOfItems: state.items,
+            subTotal: state.subtotal,
+            tax: state.tax,
+            total: state.total,
+            isPaid: false
+        }
+
+        try {
+            const { data } = await tesloApi.post<IOrder>('/orders', body); 
+
+            dispatch({
+                type: 'Cart - Order complete'
+            });
+
+            return {
+                hasError: false,
+                msg: data._id!
+            }
+
+        }catch(error){
+            console.log(error);
+            if( axios.isAxiosError(error) ){
+                const er = error as AxiosError
+                return {
+                    hasError: true,
+                    msg: er.message
+                }
+            }else{
+                return {
+                    hasError: true,
+                    msg: "vea admin"
+                }
+            }
+        }
+    }
+
     return (
     <CartContext.Provider value={{
        ...state,
        addProduct,
        updateCartQ,
        removeCartQ,
-       updateAddres
+       updateAddres,
+       createOrder
     }}>
         {children}
 

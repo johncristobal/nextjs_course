@@ -3,13 +3,14 @@ import NextLink from "next/link";
 import ItemCounter from '../ui/ItemCounter';
 import { FC, useContext } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, IOrderItem } from '../../interfaces';
 
 interface Props{
-    editable?: boolean
+    editable?: boolean;
+    products?: IOrderItem[];
 }
 
-export const CartList:FC<Props> = ({editable = false }) => {
+export const CartList:FC<Props> = ({editable = false, products=[] }) => {
 
     const {cart, updateCartQ, removeCartQ} = useContext(CartContext);
 
@@ -23,10 +24,12 @@ export const CartList:FC<Props> = ({editable = false }) => {
         removeCartQ(product);
     }
 
+    const prodsToShow = products ? products : cart;
+
   return (
     <>
     {
-        cart.map( product => (
+        prodsToShow.map( product => (
             <Grid container spacing={2} key={ product.slug + product.size } sx={{mb:1}}>
                 <Grid item xs={3}>
                     <NextLink href={`/product/${product.slug}`}>
@@ -50,7 +53,7 @@ export const CartList:FC<Props> = ({editable = false }) => {
                             editable
                             ? <ItemCounter 
                                 currentValue={ product.quantity }
-                                onChangeQuantity={ (value) => onNewQValue(product, value) }
+                                onChangeQuantity={ (value) => onNewQValue(product as ICartProduct, value) }
                             />
                             : (
                                 <Typography> { product.quantity } {product.quantity > 1 ? 'productos' : 'producto'} </Typography>
@@ -64,7 +67,7 @@ export const CartList:FC<Props> = ({editable = false }) => {
                     {
                         editable && (
                             <Button 
-                            onClick={() => onDeleteItemCart(product)}
+                            onClick={() => onDeleteItemCart(product as ICartProduct)}
                             variant='text' color='secondary'>
                                 Remove
                             </Button>

@@ -1,11 +1,21 @@
 import { Grid, Typography } from '@mui/material'
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { CartContext } from '../../context/cart/CartContext';
 import { currency } from '../../utils';
 
-export const OrdenSummary = () => {
+interface Props {
+    orderValues?: {
+        items: number; 
+        subtotal: number;
+        total: number; 
+        tax: number;    }
+}
+
+export const OrdenSummary: FC<Props> = ({ orderValues }) => {
 
     const { items, subtotal, total, tax } = useContext(CartContext);
+
+    const summaryValues = orderValues ? orderValues : {items, subtotal, total, tax};  
 
   return (
     <Grid container>
@@ -14,7 +24,7 @@ export const OrdenSummary = () => {
         </Grid>
 
         <Grid item xs={6} display='flex' justifyContent={'end'}>
-            <Typography> {items} {items > 1 ? 'productos ': 'producto'}</Typography>
+            <Typography> {summaryValues.items} {summaryValues.items > 1 ? 'productos ': 'producto'}</Typography>
         </Grid>
 
         <Grid item xs={6}>
@@ -22,7 +32,7 @@ export const OrdenSummary = () => {
         </Grid>
 
         <Grid item xs={6} display='flex' justifyContent={'end'}>
-            <Typography> { currency.format(subtotal) } </Typography>
+            <Typography> { currency.format(summaryValues.subtotal) } </Typography>
         </Grid>
 
         <Grid item xs={6}>
@@ -30,7 +40,7 @@ export const OrdenSummary = () => {
         </Grid>
 
         <Grid item xs={6} display='flex' justifyContent={'end'}>
-            <Typography> { currency.format(tax) } </Typography>
+            <Typography> { currency.format(summaryValues.tax) } </Typography>
         </Grid>
 
         <Grid item xs={6} sx={{mt:2}}>
@@ -38,7 +48,7 @@ export const OrdenSummary = () => {
         </Grid>
 
         <Grid item xs={6} display='flex' justifyContent={'end'}>
-            <Typography> { currency.format(total) } </Typography>
+            <Typography> { currency.format(summaryValues.total) } </Typography>
         </Grid>
 
     </Grid>
